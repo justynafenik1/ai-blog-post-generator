@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Blog Post Generator</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<h1 data-qa-id="title">AI Blog Post Generator</h1>
+
+<div class="description-container">
+  <p data-qa-id="description">
+    This page allows you to generate short blog posts based on a keyword you provide.
+  </p>
+</div>
+
+<div id="input-section" data-qa-id="input-section">
+  <input type="text" id="keyword" data-qa-id="keyword-input" placeholder="Enter a keyword" />
+  <div id="keyword-error" data-qa-id="keyword-error" class="error-message"></div>
+</div>
+
+<label for="tagsCheckbox" class="tags-checkbox-label">
+  <input type="checkbox" id="tagsCheckbox" data-qa-id="tags-checkbox" />
+  Add tags
+</label>
+
+<div id="tagsContainer" data-qa-id="tags-container" class="tags-container"></div>
+
+<button type="button" id="generateBtn" data-qa-id="generate-button">Generate post</button>
+
+<div id="loader" data-qa-id="loader" class="loader">Generating post...</div>
+
+<div class="filter-container">
+  <label for="tagFilter">Filter by tag:</label>
+  <select id="tagFilter" data-qa-id="tag-filter" onchange="onTagFilterChange()">
+    <option value="">All</option>
+  </select>
+</div>
+
+<div class="filter-container">
+  <label for="sortOrder">Sort by:</label>
+  <select id="sortOrder" data-qa-id="sort-order" onchange="fetchPosts()">
+    <option value="newest" data-qa-id="newest">Newest</option>
+    <option value="oldest" data-qa-id="oldest">Oldest</option>
+  </select>
+</div>
+
+<div id="toast" data-qa-id="toast" class="toast"></div>
+
+<ul id="posts" data-qa-id="posts" class="posts-list"></ul>
+
+<div class="pagination-controls">
+  <button id="prevPage" data-qa-id="previous-page" onclick="changePage(-1)">Previous</button>
+  <span id="pageInfo" data-qa-id="page-info"></span>
+  <button id="nextPage" data-qa-id="next-page" onclick="changePage(1)">Next</button>
+</div>
+
+<div id="deleteConfirm" data-qa-id="delete-confirm-modal" class="modal">
+  <p>Are you sure you want to delete this post?</p>
+  <button data-qa-id="confirm-ok" onclick="confirmDelete(true)">OK</button>
+  <button data-qa-id="confirm-cancel" onclick="confirmDelete(false)">Cancel</button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+{
+  "name": "ai-blog-post-generator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI-powered blog post generator with test automation demo",
+  "keywords": [
+    "ai",
+    "blog",
+    "post",
+    "generator",
+    "test-automation",
+    "nodejs",
+    "javascript"
+  ],
+  "homepage": "https://github.com/justynafenik1/ai-blog-post-generator#readme",
+  "bugs": {
+    "url": "https://github.com/justynafenik1/ai-blog-post-generator/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/justynafenik1/ai-blog-post-generator.git"
+  },
+  "license": "ISC",
+  "author": "Justyna Fenik",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node ./bin/www",
+    "test": "playwright test"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
+    "debug": "~2.6.9",
+    "dotenv": "^17.2.1",
+    "express": "~4.16.1",
+    "http-errors": "~1.6.3",
+    "jade": "~1.11.0",
+    "morgan": "~1.9.1",
+    "node-fetch": "^3.3.2",
+    "openai": "^5.12.2",
+    "serve-favicon": "^2.5.1",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.2"
+  }
+}
