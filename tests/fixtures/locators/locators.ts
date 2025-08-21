@@ -9,7 +9,7 @@ export function createBlogLocators(page: Page) {
     // --- Input section ---
     inputSection: page.getByTestId('input-section'),
     keywordInput: page.getByTestId('keyword-input'),
-    generateButton: page.getByTestId('btn-generate'), 
+    generateButton: page.getByTestId('generate-button'), 
     loader: page.getByTestId('loader'),
 
     // --- Filters / Sorting ---
@@ -35,6 +35,7 @@ export function createBlogLocators(page: Page) {
     postTag: page.getByTestId('post-tag'),
     postContent: page.getByTestId('post-content'),
 
+    
     // --- Post actions ---
     btnEdit: page.getByTestId('btn-edit'),
     btnDelete: page.getByTestId('btn-delete'),
