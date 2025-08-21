@@ -1,10 +1,10 @@
 import { Page, expect } from "@playwright/test";
 import { checkToast } from "../commons";
-import { createBlogLocators } from "../locators";
+import { createBlogLocators } from "../locators/locators";
 import { blogTexts } from "../texts";
 
 export class PostActions {
-  private locators;
+  private locators: ReturnType<typeof createBlogLocators>;
 
   constructor(page: Page) {
     this.locators = createBlogLocators(page);
