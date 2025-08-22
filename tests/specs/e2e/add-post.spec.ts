@@ -1,6 +1,6 @@
 import { test } from "../../fixtures/fixtures";
 
-test.describe("Post operations", () => {
+test.describe("Adding posts", () => {
   /**
    * Runs before each test to ensure the blog page is fully loaded.
    */
