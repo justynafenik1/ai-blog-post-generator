@@ -4,83 +4,137 @@ const cors = require('cors');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 
-
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+// node-fetch dynamic  import
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
 const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(cors());
 
+//  RAM memory
 let history = [];
 
+/**
+ * Cohere's generation of post title and content in JSON format
+ */
+async function generatePostWithCohere(keyword) {
+  // 🔹 mock:
+  // return {
+  //   title: `AI generated title about ${keyword}`,
+  //   content: `This is a mock AI-generated blog post about: ${keyword}.`
+  // };
 
-async function generateBlogWithCohere(keyword) {
-   // return `This is a mock blog post about: ${keyword}. This text is returned as a static response for testing purposes.`;
-  const COHERE_TOKEN = process.env.COHERE_TOKEN;
-  if (!COHERE_TOKEN) {
-    throw new Error('Missing COHERE_TOKEN environment variable');
-  }
-  const response = await fetch(
-    "https://api.cohere.ai/generate",
-    {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${COHERE_TOKEN}`,
-        "Content-Type": "application/json",
-        "Cohere-Version": "2022-12-06"
-      },
-      body: JSON.stringify({
-        model: "command",  
-        prompt: `Write a blog post about: ${keyword} that is strictly no longer than 60 words.`,
-        max_tokens: 100
-      })
-    }
-  );
+  const maxRetries = 3;
+  let attempt = 0;
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('Cohere API error:', response.status, errorText);
-    throw new Error('Failed to generate blog post');
-  }
+  while (attempt < maxRetries) {
+    attempt++;
+    try {
+      const response = await fetch("https://api.cohere.ai/generate", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${process.env.COHERE_TOKEN}`,
+          "Content-Type": "application/json",
+          "Cohere-Version": "2022-12-06"
+        },
+        body: JSON.stringify({
+          model: "command",
+          max_tokens: 400,
+          prompt: `
+Generate a blog post based on the following topic keyword: "${keyword}".
+Return ONLY a valid JSON object with fields "title" and "content".
+"content" must be concise and fully related to the "title".
 
-  const data = await response.json();
-  console.log('Cohere API response:', data);
-  return data?.generations?.[0]?.text ?? "No response from Cohere.";
+Example output:
+
+{
+  "title": "<a catchy blog post title, max 50 characters, MUST include the keyword in the text>",
+  "content": "<an engaging blog post content, max 600 characters, MUST include the keyword in the text>"
 }
 
+Make sure JSON is complete and properly formatted.
+          `
+        }),
+      });
 
-const MAX_KEYWORD_LENGTH = 100;
-const MAX_BLOG_LENGTH = 5000;
+      if (!response.ok) {
+        const err = await response.text();
+        throw new Error("Cohere API error: " + err);
+      }
 
+      const data = await response.json();
+      const text = data?.generations?.[0]?.text ?? "";
+
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        throw new Error("No JSON found in AI response");
+      }
+
+      const jsonStr = jsonMatch;
+      const parsed = JSON.parse(jsonStr);
+
+      if (!parsed.title || !parsed.content) {
+        throw new Error("AI response missing title or content");
+      }
+
+      return { title: parsed.title, content: parsed.content };
+
+    } catch (e) {
+      console.error(`Attempt ${attempt} failed: ${e.message}`);
+      if (attempt >= maxRetries) throw new Error("Max retries reached: " + e.message);
+      await new Promise(r => setTimeout(r, 1000)); // short delay before retry
+    }
+  }
+}
+
+const MAX_KEYWORD_LENGTH = 50;
+const MAX_BLOG_LENGTH = 6000;
+
+/**
+ * Generate new post
+ */
 app.post('/generate', async (req, res) => {
   const { keyword, tags = [] } = req.body;
+
   if (!keyword || keyword.trim() === '') {
     return res.status(400).json({ error: 'Missing keyword.' });
   }
   if (keyword.length > MAX_KEYWORD_LENGTH) {
     return res.status(400).json({ error: `Keyword length must not exceed ${MAX_KEYWORD_LENGTH} characters.` });
   }
+
   try {
-    const blog = await generateBlogWithCohere(keyword.trim());
+    const { title, content } = await generatePostWithCohere(keyword.trim());
 
-if (blog.length > MAX_BLOG_LENGTH) {
-      return res.status(400).json({ error: `Generated blog length exceeds maximum allowed (${MAX_BLOG_LENGTH} characters).` });
+    if (content.length > MAX_BLOG_LENGTH) {
+      return res.status(400).json({ error: `Generated content exceeds maximum allowed (${MAX_BLOG_LENGTH} characters).` });
     }
-
 
     const timestamp = new Date().toISOString();
     const id = uuidv4();
-    const entry = { id, keyword: keyword.trim(), blog, timestamp, tags: tags.map(t => t.toLowerCase()) };
+
+    const entry = {
+      id,
+      keyword: keyword.trim(),
+      title: title.trim(),
+      blog: content.trim(),
+      timestamp,
+      tags: tags.map(t => t.toLowerCase())
+    };
+
     history.push(entry);
     res.json(entry);
+
   } catch (e) {
     console.error('Error generating post:', e);
     res.status(500).json({ error: 'Error generating the post.' });
   }
 });
 
-// Get history with optional query filtering and pagination
+/**
+ *  History retrieval with optional filtering
+ */
 app.get('/history', (req, res) => {
   let { page = 1, pageSize = 2, search = '', tag = '', sort = 'newest' } = req.query;
   page = parseInt(page);
@@ -91,6 +145,7 @@ app.get('/history', (req, res) => {
     filtered = filtered.filter(
       e => e.keyword.toLowerCase().includes(search.toLowerCase())
         || e.blog.toLowerCase().includes(search.toLowerCase())
+        || e.title.toLowerCase().includes(search.toLowerCase())
     );
   }
 
@@ -110,7 +165,9 @@ app.get('/history', (req, res) => {
   res.json({ total, page, pageSize, items: paginated });
 });
 
-
+/**
+ * Delete post
+ */
 app.delete('/history/:id', (req, res) => {
   const { id } = req.params;
   const index = history.findIndex(e => e.id === id);
@@ -121,10 +178,12 @@ app.delete('/history/:id', (req, res) => {
   res.json({ message: 'Post deleted.', id });
 });
 
-// Update post (keyword, blog, tags)
+/**
+ * Update post
+ */
 app.put('/history/:id', (req, res) => {
   const { id } = req.params;
-  const { keyword, blog, tags } = req.body;
+  const { keyword, blog, tags, title } = req.body;
   const entry = history.find(e => e.id === id);
   if (!entry) {
     return res.status(404).json({ error: 'Post not found.' });
@@ -135,16 +194,24 @@ app.put('/history/:id', (req, res) => {
   if (blog && blog.length > MAX_BLOG_LENGTH) {
     return res.status(400).json({ error: `Blog length must not exceed ${MAX_BLOG_LENGTH} characters.` });
   }
+  if (title && title.trim().length < 3) {
+    return res.status(400).json({ error: "Title must be at least 3 characters long." });
+  }
 
-  if (keyword) entry.keyword = keyword;
-  if (blog) entry.blog = blog;
+  if (keyword) entry.keyword = keyword.trim();
+  if (title) entry.title = title.trim();
+  if (blog) entry.blog = blog.trim();
   if (tags) entry.tags = tags.map(t => t.toLowerCase());
+
   res.json({ message: 'Post updated.', entry });
 });
 
+/**
+ * Download unique tags
+ */
 app.get('/tags', (req, res) => {
-
   const uniqueTags = [...new Set(history.flatMap(entry => entry.tags))];
   res.json(uniqueTags);
 });
+
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));
