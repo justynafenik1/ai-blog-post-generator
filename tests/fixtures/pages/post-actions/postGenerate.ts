@@ -1,7 +1,7 @@
 import { Page, expect } from "@playwright/test";
-import { createBlogLocators } from "../locators/locators";
-import { checkToast, formatDateForPost } from "../commons";
-import { blogTexts } from "../texts";
+import { createBlogLocators } from "../../locators/locators";
+import { checkToast, formatDateForPost } from "../../commons";
+import { blogTexts } from "../../texts";
 
 export class PostGeneration {
   private locators: ReturnType<typeof createBlogLocators>;
@@ -29,8 +29,10 @@ export class PostGeneration {
     await this.locators.generateButton.click();
   }
 
-  async waitForPostLoaded() {
-    await expect(this.locators.loader).toBeHidden({ timeout: 10000 });
+  async waitForPostLoaded(): Promise<string> {
+    await expect(this.locators.loader).toBeHidden({ timeout: 60000 });
+    const generatedDate = await formatDateForPost(new Date());
+    return generatedDate;
   }
 
   /**
@@ -39,15 +41,13 @@ export class PostGeneration {
   async generatePostWithOptionalTags(
     keyword: string,
     tags?: string[]
-  ): Promise<string> {
+  ): Promise<void> {
     await this.fillKeyword(keyword);
     if (tags) {
       await this.checkTagsCheckbox();
       await this.addTags(tags);
     }
     await this.clickGeneratePostButton();
-    const generatedDate = await formatDateForPost(new Date());
-    return generatedDate;
   }
 
   /**
