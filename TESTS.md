@@ -6,7 +6,7 @@ This document contains detailed test cases for the Post Generator feature, divid
 
 
 ### -- Adding Posts --
-**TC-E2E-01:** Add post with tags  
+**TC-E2E-01:** Add post with optional tags
 - Preconditions: User is on the post creation page.  
 - Steps:
   1. Enter valid keyword.
@@ -15,7 +15,7 @@ This document contains detailed test cases for the Post Generator feature, divid
 - Expected: Loader appears. Toast "Post added!" displays. Post appears in list with entered tags.
 
 
-**TC-E2E-02:** Add post without tags  
+**TC-E2E-02:** Add post without optional tags
 - Preconditions: User is on the post creation page.  
 - Steps:
   1. Enter valid keyword, do not check "add tags".
@@ -23,7 +23,7 @@ This document contains detailed test cases for the Post Generator feature, divid
 - Expected: Loader. Toast "Post added!" displays. Post appears with empty tags.
 
 
-**TC-E2E-03:** Add two posts with the same keyword  
+**TC-E2E-03:** Add two posts with the same keyword
 - Preconditions: User is on the post creation page.  
 - Steps:
   1. Add a post with a keyword (e.g., "watermelon").
@@ -36,7 +36,7 @@ This document contains detailed test cases for the Post Generator feature, divid
 
 
 ### -- Editing Posts --
-**TC-E2E-04:** Edit: add tags to tagless post  
+**TC-E2E-04:** Add tag to tagless post  
 - Preconditions: At least one post without tags exists.  
 - Steps:
   1. Open the post without tags for editing.  
@@ -44,7 +44,7 @@ This document contains detailed test cases for the Post Generator feature, divid
 - Expected: Toast "Post updated!", tags visible.
 
 
-**TC-E2E-05:** Edit: remove tags from tagged post  
+**TC-E2E-05:** Remove tag from tagged post  
 - Preconditions: At least one post with tags exists.  
 - Steps:
   1. Open the post with tags for editing.  
@@ -52,11 +52,11 @@ This document contains detailed test cases for the Post Generator feature, divid
 - Expected: Toast "Post updated!", no tags visible.
 
 
-**TC-E2E-06:** Edit: change tags  
+**TC-E2E-06:** Add tag to tagged post 
 - Preconditions: At least one post with tags exists.  
 - Steps:
-  1. Open the post with tags for editing.  
-  2. Change tags and save.  
+  1. Open the post with tags for editing. 
+  2. Add tag and save.
 - Expected: Toast "Post updated!", updated tags visible.
 
 
@@ -67,13 +67,12 @@ This document contains detailed test cases for the Post Generator feature, divid
   2. Edit title and save.  
 - Expected: Updated title visible, toast "Post updated!"
 
-
-**TC-E2E-08:** Edit post title with valid input  
+**TC-E2E-08:** Edit post content  
 - Preconditions: At least one post exists.  
 - Steps:
   1. Open a post for editing.
-  2. Change the title to a valid string between 3 and 50 characters and save.
-- Expected: Updated title is displayed, toast "Post updated!" appears, no validation errors.
+  2. Edit content and save.  
+- Expected: Updated content visible, toast "Post updated!"
 
 
 ---

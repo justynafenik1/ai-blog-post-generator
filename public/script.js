@@ -201,11 +201,23 @@ function changePage(d) {
 
 function generateTitle(k) { return `Top facts about ${k}`; }
 
-function formatDateTime(s) {
-  if (!s) return '';
-  let d = new Date(s);
-  return d.toLocaleString();
+
+function formatDateTime(isoString) {
+  if (!isoString) return '';
+  return new Date(isoString).toLocaleString("pl-PL", {
+    hour12: false,
+    timeZone: "Europe/Warsaw",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  });
 }
+
+
+
 
 function truncate(t, max = 500) {
   return t.length <= max ? t : t.substr(0, max) + '...';
@@ -294,8 +306,8 @@ function createTagsEditor(container, initialTags = []) {
       return;
     }
 
-    if (tag.length > 7) {
-      showTagError("Tag must be at most 7 characters long.");
+    if (tag.length > 10) {
+      showTagError("Tag must be at most 10 characters long.");
       return;
     }
 
@@ -425,7 +437,7 @@ function startEdit(id) {
 
    <div style="margin-top: 12px;">
   <label>Tags:</label>
-  <ul id="editable-tags" class="tags-list"></ul>
+  <ul id="editable-tags" class="edit-tags-list" data-qa-id="edit-tags-list"></ul>
   <div class="tag-input-container">
     <input type="text" id="new-tag-input" data-qa-id="new-tag-input" class="tag-input" placeholder="Add tag" aria-label="Add tag input" />
     <button type="button" id="add-tag-edit-btn" data-qa-id="add-tag-edit-btn" class="add-tag-btn">Add Tag</button>
@@ -443,7 +455,7 @@ function startEdit(id) {
 
     <div style="margin-top: 12px;">
       <label for="edit-content">Content:</label>
-      <textarea id="edit-content" data-qa-id="edit-textarea"
+      <textarea id="edit-content" data-qa-id="edit-content"
         style="width: 100%; height: 100px; font-size: 14px; padding: 6px 10px; border-radius: 6px; border: 1px solid #cbd5e1;">${origContent}</textarea>
       <div id="edit-content-error" data-qa-id="edit-content-error" style="color: red; min-height: 18px; font-size: 14px; margin-top: 4px;"></div>
     </div>
@@ -470,11 +482,12 @@ function startEdit(id) {
       return showTagError("This tag already exists.");
     if (editableTags.children.length >= 5)
       return showTagError("Maximum 5 tags allowed.");
-    if (tag.length > 7)
-      return showTagError("Tag must be at most 7 characters long.");
+    if (tag.length > 10)
+      return showTagError("Tag must be at most 10 characters long.");
 
     const liTag = document.createElement('li');
     liTag.textContent = tag + ' ';
+    liTag.setAttribute('data-qa-id', 'tag-item');
     liTag.style.background = '#27ae60';
     liTag.style.color = 'white';
     liTag.style.fontWeight = '600';
@@ -489,6 +502,7 @@ function startEdit(id) {
     btn.type = 'button';
     btn.textContent = '×';
     btn.className = 'remove-tag';
+    btn.setAttribute('data-qa-id', 'remove-tag-button');
     btn.style.background = 'transparent';
     btn.style.border = 'none';
     btn.style.color = 'white';

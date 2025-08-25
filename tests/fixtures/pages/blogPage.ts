@@ -1,14 +1,16 @@
 import { expect, Locator, Page } from "@playwright/test";
 import { createBlogLocators } from "../locators/locators";
 import { blogTexts } from "../texts";
-import { PostActions } from "./postActions";
-import { PostGeneration } from "./postGenerate";
-import { PostList } from "./postList";
+import { PostDelete } from "./post-actions/postDelete";
+import { PostGeneration } from "./post-actions/postGenerate";
+import { PostList } from "./post-actions/postList";
+import { PostEdit } from "./post-actions/postEdit";
 
 export class BlogPage {
-  postActions: PostActions;
+  postDelete: PostDelete;
   postGeneration: PostGeneration;
   postList: PostList;
+  postEdit: PostEdit;
 
   private locators: ReturnType<typeof createBlogLocators>;
 

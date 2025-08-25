@@ -1,14 +1,16 @@
 import { test as base } from "@playwright/test";
 import { BlogPage } from "./pages/blogPage";
 import { createBlogLocators } from "./locators/locators";
-import { PostActions } from "./pages/postActions";
-import { PostGeneration } from "./pages/postGenerate";
-import { PostList } from "./pages/postList";
+import { PostDelete } from "./pages/post-actions/postDelete";
+import { PostGeneration } from "./pages/post-actions/postGenerate";
+import { PostList } from "./pages/post-actions/postList";
+import { PostEdit } from "./pages/post-actions/postEdit";
 
 type Fixtures = {
   locators: ReturnType<typeof createBlogLocators>;
   blogPage: BlogPage;
-  postActions: PostActions;
+  postDelete: PostDelete;
+  postEdit: PostEdit;
   postGeneration: PostGeneration;
   postList: PostList;
 };
@@ -20,9 +22,14 @@ export const test = base.extend<Fixtures>({
     await use(blogPage);
   },
 
-  postActions: async ({ page }, use) => {
-    const postActions = new PostActions(page);
-    await use(postActions);
+  postDelete: async ({ page }, use) => {
+    const postDelete = new PostDelete(page);
+    await use(postDelete);
+  },
+
+  postEdit: async ({ page }, use) => {
+    const postEdit = new PostEdit(page);
+    await use(postEdit);
   },
 
   postGeneration: async ({ page }, use) => {

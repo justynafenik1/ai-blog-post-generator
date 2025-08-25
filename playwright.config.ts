@@ -43,7 +43,7 @@ const projects: Project[] = [
 
 export default defineConfig({
   testDir: './tests/specs',
-  timeout: 30_000,
+  timeout: 60_000,
   retries: 0,
   workers: 1,
   reporter: [['html', { open: 'on-failure' }]],

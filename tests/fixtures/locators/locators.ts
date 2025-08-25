@@ -41,7 +41,8 @@ export function createBlogLocators(page: Page) {
     btnDelete: page.getByTestId('btn-delete'),
 
     // --- Edit mode ---
-    editTextarea: page.getByTestId('edit-textarea'),
+    editContent: page.getByTestId('edit-content'),
+    editTitle: page.getByTestId('edit-title'),
     editTagsInput: page.getByTestId('edit-tags-input'),
     btnEditSave: page.getByTestId('btn-edit-save'),
     btnEditCancel: page.getByTestId('btn-edit-cancel'),
@@ -72,8 +73,14 @@ export function createBlogLocators(page: Page) {
     tagsContainer: page.getByTestId('tags-container'),
     addTagsCheckbox: page.getByTestId('tags-checkbox'),
     addTagButton: page.getByTestId('add-tag-button'),
+    addNewTagButton: page.getByTestId('add-tag-edit-btn'),
+
     tagInput: page.getByTestId('tag-input'),
-    tagList: page.getByTestId('tag-list'),
+    newTagInput: page.getByTestId('new-tag-input'),
+
+    tagsList: page.getByTestId('tags-list'),
+    editTagsList: page.getByTestId('edit-tags-list'),
+
     tagItem: page.getByTestId('tag-item'),
     tagItemDelete: page.getByTestId('tag-item-delete'),
     tagItemEdit: page.getByTestId('tag-item-edit'),
@@ -81,5 +88,6 @@ export function createBlogLocators(page: Page) {
     tagItemCancel: page.getByTestId('tag-item-cancel'),
     tagItemDeleteConfirm: page.getByTestId('tag-item-delete-confirm'),
     tagItemDeleteCancel: page.getByTestId('tag-item-delete-cancel'),
+    removeTagButton:  page.getByTestId('remove-tag-button'),
   };
 }
