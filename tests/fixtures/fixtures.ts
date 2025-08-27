@@ -5,6 +5,10 @@ import { PostDelete } from "./pages/post-actions/postDelete";
 import { PostGeneration } from "./pages/post-actions/postGenerate";
 import { PostList } from "./pages/post-actions/postList";
 import { PostEdit } from "./pages/post-actions/postEdit";
+import type { RequestInit, Response } from "node-fetch";
+
+const fetch = (...args: [string, RequestInit?]): Promise<Response> =>
+  import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
 type Fixtures = {
   locators: ReturnType<typeof createBlogLocators>;
@@ -46,4 +50,13 @@ export const test = base.extend<Fixtures>({
     const locators = createBlogLocators(page);
     await use(locators);
   },
+});
+
+test.afterEach(async () => {
+  try {
+    await fetch("http://localhost:3000/test-reset", { method: "POST" });
+    console.log("Test data cleaned after test");
+  } catch (e) {
+    console.error("Failed to clean test data:", e);
+  }
 });
