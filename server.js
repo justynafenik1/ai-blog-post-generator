@@ -16,14 +16,22 @@ app.use(cors());
 let history = [];
 
 /**
- * Cohere's generation of post title and content in JSON format
+ * Cohere's or mock generation of post title and content in JSON format
  */
-async function generatePostWithCohere(keyword) {
-  // 🔹 mock:
-  // return {
-  //   title: `AI generated title about ${keyword}`,
-  //   content: `This is a mock AI-generated blog post about: ${keyword}.`
-  // };
+const mockCallCount = {};
+
+const useMock = process.env.MOCK === 'true';
+
+async function generatePostWithCohereOrMock(keyword) {
+  if (useMock) {
+    // Mock zwracający unikalne posty
+    if (!mockCallCount[keyword]) mockCallCount[keyword] = 0;
+    mockCallCount[keyword]++;
+    return {
+      title: `Mock AI generated title about ${keyword} #${mockCallCount[keyword]}`,
+      content: `This is mock AI-generated blog post about: ${keyword} (version ${mockCallCount[keyword]}).`
+    };
+  } else {
 
   const maxRetries = 3;
   let attempt = 0;
@@ -86,6 +94,7 @@ Make sure JSON is complete and properly formatted.
       await new Promise(r => setTimeout(r, 1000)); // short delay before retry
     }
   }
+  }
 }
 
 const MAX_KEYWORD_LENGTH = 50;
@@ -105,7 +114,7 @@ app.post('/generate', async (req, res) => {
   }
 
   try {
-    const { title, content } = await generatePostWithCohere(keyword.trim());
+    const { title, content } = await generatePostWithCohereOrMock(keyword.trim());
 
     if (content.length > MAX_BLOG_LENGTH) {
       return res.status(400).json({ error: `Generated content exceeds maximum allowed (${MAX_BLOG_LENGTH} characters).` });
@@ -212,6 +221,14 @@ app.put('/history/:id', (req, res) => {
 app.get('/tags', (req, res) => {
   const uniqueTags = [...new Set(history.flatMap(entry => entry.tags))];
   res.json(uniqueTags);
+});
+
+/**
+ * Test Reset: Remove post history
+ */
+app.post('/test-reset', (req, res) => {
+  history = []; 
+  res.json({ message: 'History cleared.' });
 });
 
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));

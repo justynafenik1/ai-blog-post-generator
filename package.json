@@ -25,9 +25,10 @@
   "type": "commonjs",
   "main": "server.js",
   "scripts": {
-    "start": "node ./bin/www",
-    "test": "playwright test"
-  },
+  "start": "node ./bin/www",
+  "test": "npx playwright test",
+  "test:mock": "set MOCK=true&& npx playwright test"
+},
   "dependencies": {
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
