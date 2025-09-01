@@ -9,11 +9,10 @@ test.describe("Deleting post", () => {
 
   test.beforeEach(async ({ blogPage, postGeneration }) => {
     await blogPage.pageIsLoaded();
-    await postGeneration.generatePostWithOptionalTags(keyword);
-    await postGeneration.waitForPostLoaded();
-    await postGeneration.expectPostAddedToastVisible();
+    await postGeneration.addPost(keyword);
+
   });
-  
+
   /**
    * This test verifies that a post with a given keyword can be deleted successfully.
    */

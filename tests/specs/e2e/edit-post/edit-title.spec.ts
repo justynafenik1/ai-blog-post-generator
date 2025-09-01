@@ -17,10 +17,8 @@ test.describe("Editing title", () => {
     let keyword = "actor";
 
     test.beforeEach(async ({ postGeneration }) => {
-      await postGeneration.generatePostWithOptionalTags(keyword);
+      await postGeneration.addPost(keyword);
 
-      await postGeneration.waitForPostLoaded();
-      await postGeneration.expectPostAddedToastVisible();
     });
 
     test("should update post title successfully", async ({

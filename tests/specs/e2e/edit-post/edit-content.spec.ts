@@ -17,10 +17,7 @@ test.describe("Editing content", () => {
     let keyword = "soap";
 
     test.beforeEach(async ({ postGeneration }) => {
-      await postGeneration.generatePostWithOptionalTags(keyword);
-
-      await postGeneration.waitForPostLoaded();
-      await postGeneration.expectPostAddedToastVisible();
+      await postGeneration.addPost(keyword);
     });
 
     test("should update post content successfully", async ({

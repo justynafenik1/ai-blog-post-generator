@@ -56,4 +56,11 @@ export class PostGeneration {
   async expectPostAddedToastVisible(): Promise<void> {
     await checkToast(this.locators.toastAdded, blogTexts.postAdded);
   }
+
+  async addPost(keyword: string, tags?: string[]): Promise<string> {
+    await this.generatePostWithOptionalTags(keyword, tags);
+    const generatedDate = await this.waitForPostLoaded();
+    await this.expectPostAddedToastVisible();
+    return generatedDate;
+  }
 }

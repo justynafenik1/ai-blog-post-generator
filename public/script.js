@@ -132,7 +132,7 @@ async function generate() {
 }
 
 
-let currentPage = 1, pageSize = 2;
+let currentPage = 1, pageSize = 3;
 
 async function fetchPosts() {
   showLoader();

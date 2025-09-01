@@ -50,7 +50,7 @@ export class PostList {
     const posts = await this.getPostsDataByKeyword(keyword);
     expect(posts.length).toBeGreaterThan(0);
 
-    if (!filters) return; // jeśli filters nie jest podane, pomijamy dalszą weryfikację
+    if (!filters) return; 
 
     for (const key in filters) {
       const expected = filters[key as keyof postData];
