@@ -138,6 +138,7 @@ async function fetchPosts() {
   showLoader();
   try {
     const sort = document.getElementById('sortOrder').value;
+
     const tag = document.getElementById('tagFilter').value;
     const tagParam = tag ? `&tag=${encodeURIComponent(tag)}` : '';
     const res = await fetch(`/history?page=${currentPage}&pageSize=${pageSize}&sort=${sort}${tagParam}`);
@@ -231,7 +232,7 @@ function renderPosts(data) {
     return;
   }
   ul.innerHTML = posts.map(post => `
-      <li data-id="${post.id}" data-qa-id="post-container">
+      <li class="post-container" data-id="${post.id}" data-qa-id="post-container">
         <div class="post-header">
           <div class="timestamp" data-qa-id="post-date">${formatDateTime(post.timestamp)}</div>
           <div class="title" data-qa-id="post-title">${post.title || generateTitle(post.keyword)}</div>

@@ -1,4 +1,4 @@
-import { test as base } from "@playwright/test";
+import { test as base, expect as baseExpect  } from "@playwright/test";
 import { BlogPage } from "./pages/blogPage";
 import { createBlogLocators } from "./locators/locators";
 import { PostDelete } from "./pages/post-actions/postDelete";
@@ -6,6 +6,7 @@ import { PostGeneration } from "./pages/post-actions/postGenerate";
 import { PostList } from "./pages/post-actions/postList";
 import { PostEdit } from "./pages/post-actions/postEdit";
 import type { RequestInit, Response } from "node-fetch";
+import { PostFilters } from "./pages/post-actions/postFilters";
 
 const fetch = (...args: [string, RequestInit?]): Promise<Response> =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
@@ -17,6 +18,7 @@ type Fixtures = {
   postEdit: PostEdit;
   postGeneration: PostGeneration;
   postList: PostList;
+  postFilters: PostFilters;
 };
 
 export const test = base.extend<Fixtures>({
@@ -46,17 +48,23 @@ export const test = base.extend<Fixtures>({
     await use(postList);
   },
 
+  postFilters: async ({ page }, use) => {
+    const postFilters = new PostFilters(page);
+    await use(postFilters);
+  },
+
   locators: async ({ page }, use) => {
     const locators = createBlogLocators(page);
     await use(locators);
   },
 });
 
-test.afterEach(async () => {
-  try {
-    await fetch("http://localhost:3000/test-reset", { method: "POST" });
-    console.log("Test data cleaned after test");
-  } catch (e) {
-    console.error("Failed to clean test data:", e);
-  }
+export { baseExpect as expect };
+
+test.beforeEach(async ({ request }) => {
+  await request.post('http://localhost:3000/test-reset');
+  const res = await request.get('http://localhost:3000/history?page=1&pageSize=10');
+  const data = await res.json();
+  console.log('Items after reset:', data.items);
+  baseExpect(data.total).toBe(0);
 });
