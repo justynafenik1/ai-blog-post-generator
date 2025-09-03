@@ -1,5 +1,4 @@
 import { test } from "../../../fixtures/fixtures";
-import { BlogPage } from "../../../fixtures/pages/blogPage";
 
 test.describe("Editing title", () => {
   /**
@@ -17,10 +16,7 @@ test.describe("Editing title", () => {
     let keyword = "actor";
 
     test.beforeEach(async ({ postGeneration }) => {
-      await postGeneration.generatePostWithOptionalTags(keyword);
-
-      await postGeneration.waitForPostLoaded();
-      await postGeneration.expectPostAddedToastVisible();
+      await postGeneration.addPost(keyword);
     });
 
     test("should update post title successfully", async ({

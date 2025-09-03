@@ -1,5 +1,4 @@
-import { expect } from "@playwright/test";
-import { test } from "../../fixtures/fixtures";
+import { test, expect } from "../../fixtures/fixtures";
 
 test.describe("Adding posts", () => {
   /**
@@ -19,14 +18,10 @@ test.describe("Adding posts", () => {
     postGeneration,
     postList,
   }) => {
-    await postGeneration.generatePostWithOptionalTags("watermelon", [
+    const postGeneratedDate = await postGeneration.addPost("watermelon", [
       "fruits",
       "food",
     ]);
-
-    const postGeneratedDate = await postGeneration.waitForPostLoaded();
-    postGeneration.expectPostAddedToastVisible();
-
     await postList.verifyAddedPostData("watermelon", ["fruits", "food"], {
       title: "watermelon",
       content: "watermelon",
@@ -45,9 +40,7 @@ test.describe("Adding posts", () => {
     postGeneration,
     postList,
   }) => {
-    await postGeneration.generatePostWithOptionalTags("dog");
-    const postGeneratedDate = await postGeneration.waitForPostLoaded();
-    await postGeneration.expectPostAddedToastVisible();
+    const postGeneratedDate = await postGeneration.addPost("dog");
 
     await postList.verifyAddedPostData("dog", [], {
       title: "dog",
@@ -67,16 +60,8 @@ test.describe("Adding posts", () => {
   }) => {
     const keyword = "potato";
 
-    // Add first post
-    await postGeneration.generatePostWithOptionalTags(keyword);
-    await postGeneration.waitForPostLoaded();
-    await postGeneration.expectPostAddedToastVisible();
-
-    // Add second post
-    await postGeneration.generatePostWithOptionalTags(keyword);
-    await postGeneration.waitForPostLoaded();
-    await postGeneration.expectPostAddedToastVisible();
-
+    await postGeneration.addPost(keyword);
+    await postGeneration.addPost(keyword);
     const data = await postList.getPostsDataByKeyword(keyword);
     expect(data.length).toBeGreaterThanOrEqual(2);
 

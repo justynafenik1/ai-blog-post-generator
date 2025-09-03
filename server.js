@@ -227,7 +227,8 @@ app.get('/tags', (req, res) => {
  * Test Reset: Remove post history
  */
 app.post('/test-reset', (req, res) => {
-  history = []; 
+  console.log('Test reset endpoint called');
+  history.length = 0;
   res.json({ message: 'History cleared.' });
 });
 

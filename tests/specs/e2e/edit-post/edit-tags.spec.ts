@@ -1,5 +1,4 @@
 import { test } from "../../../fixtures/fixtures";
-import { BlogPage } from "../../../fixtures/pages/blogPage";
 
 test.describe("Editing tags", () => {
   /**
@@ -12,10 +11,7 @@ test.describe("Editing tags", () => {
 
   test.describe("TC-E2E-04: Add tag to tagless post", () => {
     test.beforeEach(async ({ postGeneration }) => {
-      await postGeneration.generatePostWithOptionalTags("chair");
-
-      await postGeneration.waitForPostLoaded();
-      await postGeneration.expectPostAddedToastVisible();
+      await postGeneration.addPost("chair");
     });
 
     test("should add a tag to a post without tags", async ({
@@ -32,10 +28,7 @@ test.describe("Editing tags", () => {
 
   test.describe("TC-E2E-05: Remove tag from tagged post", () => {
     test.beforeEach(async ({ postGeneration }) => {
-      await postGeneration.generatePostWithOptionalTags("woman", ["human"]);
-
-      await postGeneration.waitForPostLoaded();
-      await postGeneration.expectPostAddedToastVisible();
+      await postGeneration.addPost("woman", ["human"]);
     });
 
     test("should remove tag from post", async ({ postEdit, postList }) => {
@@ -49,10 +42,7 @@ test.describe("Editing tags", () => {
 
   test.describe("TC-E2E-06: Add tag to tagged post", () => {
     test.beforeEach(async ({ postGeneration }) => {
-      await postGeneration.generatePostWithOptionalTags("pizza", ["food"]);
-
-      await postGeneration.waitForPostLoaded();
-      await postGeneration.expectPostAddedToastVisible();
+      await postGeneration.addPost("pizza", ["food"]);
     });
 
     test("should add another tag to post", async ({ postEdit, postList }) => {

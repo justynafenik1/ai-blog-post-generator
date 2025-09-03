@@ -1,5 +1,6 @@
 import { expect, Locator, Page } from "@playwright/test";
 import { createBlogLocators } from "../../locators/locators";
+import { parsePostDate } from "../../commons";
 
 type postData = {
   title?: string;
@@ -50,7 +51,7 @@ export class PostList {
     const posts = await this.getPostsDataByKeyword(keyword);
     expect(posts.length).toBeGreaterThan(0);
 
-    if (!filters) return; // jeśli filters nie jest podane, pomijamy dalszą weryfikację
+    if (!filters) return;
 
     for (const key in filters) {
       const expected = filters[key as keyof postData];
@@ -62,6 +63,25 @@ export class PostList {
         expect(
           match,
           `Tags verification failed. Expected: [${expectedTags.join(", ")}]`
+        ).toBe(true);
+      } else if (key === "timestamp") {
+        const expectedTimestamp = expected as string;
+
+        const foundMatch = posts.some(post => {
+          if (!post.timestamp) return false;
+          try {
+            const actualDate = parsePostDate(post.timestamp);
+            const expectedDate = parsePostDate(expectedTimestamp);
+            const diffMs = Math.abs(actualDate.getTime() - expectedDate.getTime());
+            return diffMs <= 5000; 
+          } catch {
+            return false;
+          }
+        });
+
+        expect(
+          foundMatch,
+          `Timestamp verification failed. Expected close to: "${expectedTimestamp}"`
         ).toBe(true);
       } else {
         const found = posts.some((post) => {
