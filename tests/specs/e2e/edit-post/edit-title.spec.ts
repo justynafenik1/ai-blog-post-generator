@@ -1,5 +1,4 @@
 import { test } from "../../../fixtures/fixtures";
-import { BlogPage } from "../../../fixtures/pages/blogPage";
 
 test.describe("Editing title", () => {
   /**
@@ -18,7 +17,6 @@ test.describe("Editing title", () => {
 
     test.beforeEach(async ({ postGeneration }) => {
       await postGeneration.addPost(keyword);
-
     });
 
     test("should update post title successfully", async ({

@@ -1,5 +1,4 @@
-import { expect } from "@playwright/test";
-import { test } from "../../fixtures/fixtures";
+import { test, expect } from "../../fixtures/fixtures";
 
 test.describe("Deleting post", () => {
   /**
@@ -10,7 +9,6 @@ test.describe("Deleting post", () => {
   test.beforeEach(async ({ blogPage, postGeneration }) => {
     await blogPage.pageIsLoaded();
     await postGeneration.addPost(keyword);
-
   });
 
   /**

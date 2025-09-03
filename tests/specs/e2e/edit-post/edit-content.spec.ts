@@ -1,5 +1,4 @@
 import { test } from "../../../fixtures/fixtures";
-import { BlogPage } from "../../../fixtures/pages/blogPage";
 
 test.describe("Editing content", () => {
   /**
